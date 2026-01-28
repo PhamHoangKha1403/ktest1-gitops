@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ktest1-backend
+    helios.io/managed-by: operator
+  name: ktest1-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ktest1-backend
+  template:
+    metadata:
+      labels:
+        app: ktest1-backend
+    spec:
+      containers:
+      - env:
+        - name: NODE_ENV
+          value: production
+        image: myuser/k-test1:latest
+        name: ktest1-backend
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ktest1-backend
+  name: ktest1-backend
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: ktest1-backend
+  type: ClusterIP
